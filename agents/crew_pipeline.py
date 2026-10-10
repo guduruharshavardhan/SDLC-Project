@@ -318,13 +318,17 @@ def run_sdlc_pipeline(requirement: str, wiki_topic: str = "electronic health rec
     try:
         try:
             import crewai  # noqa: F401
-
-            artifacts = _run_with_crewai(requirement, context)
-            engine = "crewai"
-        except Exception as crew_exc:
-            # Prefer CrewAI; fall back to Groq sequential if CrewAI fails at runtime
+        except ModuleNotFoundError as exc:
+            if exc.name != "crewai":
+                raise
             artifacts = _run_with_groq(requirement, context)
-            engine = f"groq-sequential (crewai_error={type(crew_exc).__name__}: {crew_exc})"
+        else:
+            try:
+                artifacts = _run_with_crewai(requirement, context)
+                engine = "crewai"
+            except Exception as crew_exc:
+                artifacts = _run_with_groq(requirement, context)
+                engine = f"groq-sequential (crewai_error={type(crew_exc).__name__}: {crew_exc})"
 
         for spec in AGENTS:
             output = artifacts.get(spec["name"], "")
