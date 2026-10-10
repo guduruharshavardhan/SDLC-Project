@@ -26,7 +26,7 @@ Streamlit app that turns a healthcare software requirement into a full SDLC pack
 
 ```toml
 GROQ_API_KEY = "your_groq_key"
-GROQ_MODEL = "llama-3.1-8b-instant"
+GROQ_MODEL = "openai/gpt-oss-20b"
 ```
 
 5. Deploy.
@@ -37,7 +37,7 @@ GROQ_MODEL = "llama-3.1-8b-instant"
 2. Push this repo to the Space git remote (or upload files).
 3. In **Settings → Variables and secrets**, add:
    - `GROQ_API_KEY` (secret)
-   - `GROQ_MODEL` = `llama-3.1-8b-instant` (optional)
+   - `GROQ_MODEL` = `openai/gpt-oss-20b` (optional)
 4. Wait for the build; open the Space URL.
 
 ## Local run
