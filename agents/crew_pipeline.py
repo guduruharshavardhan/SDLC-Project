@@ -20,6 +20,10 @@ load_dotenv(ROOT / ".env", override=False)
 OUTPUT_DIR = ROOT / "outputs"
 OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
 
+DEFAULT_GROQ_MODEL = "openai/gpt-oss-20b"
+DEPRECATED_GROQ_MODELS = {"llama-3.1-8b-instant"}
+
+
 
 def _resolve_groq_api_key() -> str:
     """Prefer process env, then Streamlit secrets (Community Cloud)."""
@@ -39,6 +43,23 @@ def _resolve_groq_api_key() -> str:
     raise RuntimeError(
         "GROQ_API_KEY missing. Set it in Streamlit Cloud Secrets, or in local .env / .streamlit/secrets.toml"
     )
+
+
+def _resolve_groq_model() -> str:
+    model = (os.getenv("GROQ_MODEL") or "").strip()
+    if not model:
+        try:
+            import streamlit as st
+
+            model = str(st.secrets.get("GROQ_MODEL", "")).strip()
+        except Exception:
+            model = ""
+
+    model = model.removeprefix("groq/")
+    if model in DEPRECATED_GROQ_MODELS:
+        return DEFAULT_GROQ_MODEL
+    return model or DEFAULT_GROQ_MODEL
+
 
 AGENTS = [
     {
@@ -98,7 +119,7 @@ def _groq_client() -> Groq:
 def _chat(client: Groq, system: str, user: str) -> str:
     import time
 
-    model = os.getenv("GROQ_MODEL", "llama-3.1-8b-instant")
+    model = _resolve_groq_model()
     last_exc: Exception | None = None
     for attempt in range(4):
         try:
@@ -149,15 +170,7 @@ def _make_crewai_llm():
     from crewai.llms.base_llm import BaseLLM
 
     api_key = _resolve_groq_api_key()
-    model = os.getenv("GROQ_MODEL", "llama-3.1-8b-instant").replace("groq/", "")
-    try:
-        import streamlit as st
-
-        if not os.getenv("GROQ_MODEL") and st.secrets.get("GROQ_MODEL"):
-            model = str(st.secrets["GROQ_MODEL"]).replace("groq/", "")
-            os.environ["GROQ_MODEL"] = model
-    except Exception:
-        pass
+    model = _resolve_groq_model()
 
     class GroqCrewLLM(BaseLLM):
         def __init__(self):
