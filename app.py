@@ -77,7 +77,7 @@ if run_clicked:
         st.error(
             "GROQ_API_KEY is missing. On Streamlit Cloud: App menu → Settings → Secrets, then paste:\n\n"
             'GROQ_API_KEY = "your_key"\n'
-            'GROQ_MODEL = "llama-3.1-8b-instant"'
+            'GROQ_MODEL = "openai/gpt-oss-20b"'
         )
     elif not requirement.strip():
         st.error("Please enter a requirement.")
