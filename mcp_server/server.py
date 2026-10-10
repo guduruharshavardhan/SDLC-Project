@@ -37,7 +37,7 @@ def project_status() -> dict:
     return {
         "root": str(ROOT),
         "groq_api_key_set": bool(os.getenv("GROQ_API_KEY")),
-        "groq_model": os.getenv("GROQ_MODEL", "llama-3.1-8b-instant"),
+        "groq_model": os.getenv("GROQ_MODEL", "openai/gpt-oss-20b"),
         "domain_pdfs": pdfs,
         "traces_exists": traces.exists(),
         "feedback_exists": feedback.exists(),
