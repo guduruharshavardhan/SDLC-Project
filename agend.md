@@ -29,7 +29,7 @@ Open `http://localhost:8501`.
 | Variable       | Purpose                          |
 |----------------|----------------------------------|
 | `GROQ_API_KEY` | Required for LLM calls           |
-| `GROQ_MODEL`   | Default: `llama-3.1-8b-instant`  |
+| `GROQ_MODEL`   | Default: `openai/gpt-oss-20b`  |
 
 ---
 
